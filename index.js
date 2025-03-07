@@ -3,6 +3,7 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 import connectToDB from "./db.js";
 import bodyParser from 'body-parser';
+import cors from 'cors'
 import http from 'http'
 import { Server } from 'socket.io';
 import userRouter from './routes/userRouter.js'
@@ -10,9 +11,11 @@ import postRouter from './routes/postRouter.js'
 import Post from './models/Post.js';
 import User from './models/User.js';
 
+
 connectToDB();
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 app.use("/api/user", userRouter);
 app.use("/api/post", postRouter);

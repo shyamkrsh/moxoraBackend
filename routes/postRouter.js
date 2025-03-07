@@ -5,7 +5,7 @@ import authMiddleware from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 router.post("/create", authMiddleware, createPost);
-router.get("/all", authMiddleware, getAllPosts);
+router.get("/all", getAllPosts);
 router.post("/like", authMiddleware, likePost);
 router.post("/comment", authMiddleware, commentPost);
 router.patch("/update", authMiddleware, updatePost);
