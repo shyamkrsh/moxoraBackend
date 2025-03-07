@@ -17,6 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/user", userRouter);
 app.use("/api/post", postRouter);
 
+// Create HTTP server for Express and Socket.io
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
@@ -25,10 +26,6 @@ const io = new Server(server, {
     },
 });
 
-
-
-
-
 io.on('connection', (socket) => {
     console.log('A user connected:', socket.id);
     socket.on('disconnect', () => {
@@ -36,41 +33,46 @@ io.on('connection', (socket) => {
     });
 });
 
+// User Change Stream
+// const userChangeStream = User.watch([], { fullDocument: "updateLookup" });
+// userChangeStream.on("change", async (change) => {
+//     console.log("User Change detected:", change);
+//     let updateData;
+//     if (change.operationType === "insert") {
+//         updateData = { type: "insert", newUser: change.fullDocument };
+//     } else if (change.operationType === "update") {
+//         updateData = {
+//             type: "update",
+//             updatedFields: change.updateDescription.updatedFields,
+//             userId: change.documentKey._id
+//         };
+//     } else if (change.operationType === "delete") {
+//         updateData = { type: "delete", userId: change.documentKey._id };
+//     }
+//     console.log("Emitting update:", updateData);
+//     io.emit("userUpdate", updateData);
+// });
 
+// Post Change Stream
+// const postChangeStream = Post.watch([], { fullDocument: "updateLookup" });
+// postChangeStream.on("change", async (change) => {
+//     console.log("Post Change detected:", change);
+//     let updateData;
+//     if (change.operationType === "insert") {
+//         updateData = { type: "insert", newPost: change.fullDocument };
+//     } else if (change.operationType === "update") {
+//         updateData = {
+//             type: "update",
+//             updatedFields: change.updateDescription.updatedFields,
+//             postId: change.documentKey._id
+//         };
+//     } else if (change.operationType === "delete") {
+//         updateData = { type: "delete", postId: change.documentKey._id };
+//     }
+//     console.log("Emitting update:", updateData);
+//     io.emit("postUpdate", updateData);
+// });
 
-
-const userChangeStream = User.watch();
-userChangeStream.on("change", async (change) => {
-    console.log("User Change detected:", change);
-    if (change.operationType === 'update') {
-        io.emit("userUpdate", {
-            type: "update",
-            updatedFields: change.updateDescription.updatedFields,
-            userId: change.documentKey._id
-        })
-    }else if (change.operationType === "delete") {
-        io.emit("postUpdate", { type: "delete", userId: change.documentKey._id });
-    }
-    io.emit("userUpdate", {});
-})
-
-const postChangeStream = Post.watch();
-postChangeStream.on("change", async (change) => {
-    console.log("Post Change detected:", change);
-    if (change.operationType === "insert") {
-        io.emit("postUpdate", { type: "insert", newPost: change.fullDocument });
-    } else if (change.operationType === "update") {
-        io.emit("postUpdate", {
-            type: "update",
-            updatedFields: change.updateDescription.updatedFields,
-            postId: change.documentKey._id
-        });
-    } else if (change.operationType === "delete") {
-        io.emit("postUpdate", { type: "delete", postId: change.documentKey._id });
-    }
+server.listen(PORT, () => {
+    console.log(`Server is listening on port: ${PORT}`);
 });
-
-
-app.listen(PORT, () => {
-    console.log(`Server is listening to the port : ${PORT}`)
-})

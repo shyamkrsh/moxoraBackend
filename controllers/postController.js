@@ -36,4 +36,62 @@ export const likePost = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+export const commentPost = async (req, res) => {
+    try {
+        const { postId, text } = req.body;
+        const userId = req.user?.id;
+        const post = await Post.findById(postId);
+        if (!post) {
+            return res.status(404).json({
+                message: "Post not found",
+                success: false,
+                error: true
+            });
+        }
+        const newComment = {
+            userId,
+            text,
+            createdAt: new Date()
+        };
 
+        post.comments.push(newComment);
+        await post.save();
+        res.status(200).json({
+            message: "Comment added successfully",
+            success: true,
+            error: false,
+            data: newComment
+        });
+    } catch (err) {
+        console.error("Error adding comment:", err);
+        res.status(500).json({
+            message: "Internal Server Error",
+            success: false,
+            error: true
+        });
+    }
+};
+export const updatePost = async (req, res) => {
+    try {
+        const { postId, updateData } = req.body; 
+        const updatedPost = await Post.findByIdAndUpdate(
+            postId, 
+            updateData, 
+            { new: true, runValidators: true } 
+        );
+        if (!updatedPost) {
+            return res.status(404).json({ success: false, message: "Post not found" });
+        }
+        res.status(200).json({
+            success: true,
+            message: "Post updated successfully",
+            data: updatedPost,
+        });
+    } catch (error) {
+        console.error("Error updating post:", error);
+        res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+        });
+    }
+};
