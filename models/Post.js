@@ -3,7 +3,7 @@ import { Schema } from "mongoose";
 
 const postSchema = new Schema(
     {
-        user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+        user: { type: Schema.Types.ObjectId, ref: "User" },
         caption: { type: String, maxlength: 2200 },
         mediaUrl: { type: String },
         likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
