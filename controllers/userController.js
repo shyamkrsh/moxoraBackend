@@ -30,3 +30,38 @@ export const login = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const getUserDetails = async (req, res) => {
+    try {
+        if (!req.user || !req.user.id) {
+            return res.status(400).json({
+                message: "User ID missing in request",
+                success: false,
+                error: true
+            });
+        }
+        const userDetails = await User.findById(req.user.id).select("-password");
+
+        if (!userDetails) {
+            return res.status(404).json({
+                message: "User not found",
+                success: false,
+                error: true
+            });
+        }
+        res.status(200).json({
+            message: "User details retrieved successfully",
+            data: userDetails,
+            success: true,
+            error: false
+        });
+
+    } catch (err) {
+        console.error("Error fetching user details:", err);
+        res.status(500).json({
+            message: "Internal server error",
+            success: false,
+            error: true
+        });
+    }
+};
