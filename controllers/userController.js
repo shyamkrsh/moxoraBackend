@@ -65,3 +65,29 @@ export const getUserDetails = async (req, res) => {
         });
     }
 };
+
+export const updateUserInfo = async (req, res) => {
+    try {
+        const userId = req.user.id; 
+        const updateData = req.body; 
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            updateData,
+            { new: true, runValidators: true }
+        );
+        if (!updatedUser) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+        res.status(200).json({
+            success: true,
+            message: "User information updated successfully",
+            data: updatedUser,
+        });
+    } catch (error) {
+        console.error("Error updating user:", error);
+        res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+        });
+    }
+};
