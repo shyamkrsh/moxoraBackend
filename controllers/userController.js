@@ -32,16 +32,18 @@ export const login = async (req, res) => {
 };
 
 export const getUserDetails = async (req, res) => {
+    const { userId } = req.body;
     try {
-        if (!req.user || !req.user.id) {
+        console.log("hello - ", userId)
+        if (!userId) {
             return res.status(400).json({
                 message: "User ID missing in request",
                 success: false,
                 error: true
             });
         }
-        const userDetails = await User.findById(req.user.id).select("-password");
-
+        const userDetails = await User.findById(userId).select("-password");
+        console.log("user Details - ", userDetails)
         if (!userDetails) {
             return res.status(404).json({
                 message: "User not found",
