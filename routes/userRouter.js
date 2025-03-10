@@ -9,6 +9,6 @@ router.post("/login", login);
 router.post("/userDetails", authMiddleware, getUserDetails);
 router.patch("/updateBio", authMiddleware, updateUserBio);
 router.patch("/updatePic", authMiddleware, updateUserPic);
-router.post("/getPostedBy", getPostedBy);
+router.get("/getPostedBy", getPostedBy);
 
 export default router;

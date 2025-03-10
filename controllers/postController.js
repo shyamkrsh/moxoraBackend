@@ -72,11 +72,11 @@ export const commentPost = async (req, res) => {
 };
 export const updatePost = async (req, res) => {
     try {
-        const { postId, updateData } = req.body; 
+        const { postId, updateData } = req.body;
         const updatedPost = await Post.findByIdAndUpdate(
-            postId, 
-            updateData, 
-            { new: true, runValidators: true } 
+            postId,
+            updateData,
+            { new: true, runValidators: true }
         );
         if (!updatedPost) {
             return res.status(404).json({ success: false, message: "Post not found" });
@@ -94,3 +94,28 @@ export const updatePost = async (req, res) => {
         });
     }
 };
+
+export const deletePost = async (req, res) => {
+    try {
+        const { userId, postedById, postId } = req.body;
+        if (userId != postedById) {
+            throw new Error("UnAthorized Access!")
+        }
+        const deletedPost = await Post.findByIdAndDelete(postId);
+        console.log(deletedPost);
+        res.status(200).json({
+            message: "Post has been deleted",
+            data: deletedPost,
+            success: true,
+            error: false
+        })
+    } catch (err) {
+        res.status(500).json({
+            message: "Internal Server error",
+            data: [],
+            success: false,
+            error: true,
+        })
+    }
+
+}

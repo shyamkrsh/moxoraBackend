@@ -124,7 +124,7 @@ export const updateUserPic = async (req, res) => {
 
 export const getPostedBy = async (req, res) => {
     try {
-        const { postedById } = req.body;
+        const { postedById } = req.query;
         console.log("AuthorId - ", postedById)
         const postedBy = await User.findById(postedById).select("-password");
         if (!postedBy) {
