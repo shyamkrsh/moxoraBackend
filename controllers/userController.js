@@ -94,3 +94,54 @@ export const updateUserBio = async (req, res) => {
         });
     }
 };
+
+export const updateUserPic = async (req, res) => {
+    try {
+        const { userId, uploadedUrl } = req.body;
+        console.log(userId, uploadedUrl);
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { profilePic: uploadedUrl },
+            { new: true, runValidators: true }
+        );
+        if (!updatedUser) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+        console.log("Updated - ", updatedUser)
+        res.status(200).json({
+            success: true,
+            message: "User information updated successfully",
+            data: updatedUser,
+        });
+    } catch (error) {
+        console.error("Error updating user:", error);
+        res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+        });
+    }
+}
+
+export const getPostedBy = async (req, res) => {
+    try {
+        const { postedById } = req.body;
+        console.log("AuthorId - ", postedById)
+        const postedBy = await User.findById(postedById).select("-password");
+        if (!postedBy) {
+            throw new Error("Post Author does not exists");
+        }
+        res.status(200).json({
+            message: "Sending Post Author Details",
+            data: postedBy,
+            success: true,
+            error: false
+        })
+    } catch (err) {
+        res.json({
+            message: err.message || err,
+            data: [],
+            success: false,
+            error: true
+        })
+    }
+}
