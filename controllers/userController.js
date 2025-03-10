@@ -4,12 +4,12 @@ import jwt from 'jsonwebtoken'
 
 export const register = async (req, res) => {
     try {
-        const { emailOrMobile, password } = req.body;
+        const { username, emailOrMobile, password } = req.body;
         const existingUser = await User.findOne({ emailOrMobile });
         if (existingUser) return res.json({ message: "User already exists" });
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
-        const newUser = new User({ emailOrMobile, password: hashedPassword });
+        const newUser = new User({ username, emailOrMobile, password: hashedPassword });
         await newUser.save();
         res.status(201).json({ message: "User registered successfully", data: newUser });
     } catch (error) {
@@ -68,18 +68,19 @@ export const getUserDetails = async (req, res) => {
     }
 };
 
-export const updateUserInfo = async (req, res) => {
+export const updateUserBio = async (req, res) => {
     try {
-        const userId = req.user.id;
-        const updateData = req.body;
+        const { userId, userBio } = req.body;
+        console.log(userId, userBio);
         const updatedUser = await User.findByIdAndUpdate(
             userId,
-            updateData,
+            { bio: userBio },
             { new: true, runValidators: true }
         );
         if (!updatedUser) {
             return res.status(404).json({ success: false, message: "User not found" });
         }
+        console.log("Updated - ", updatedUser)
         res.status(200).json({
             success: true,
             message: "User information updated successfully",
