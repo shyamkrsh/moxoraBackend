@@ -17,6 +17,7 @@ app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
+
 app.use("/api/user", userRouter);
 app.use("/api/post", postRouter);
 

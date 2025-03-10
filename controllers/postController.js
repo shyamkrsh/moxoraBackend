@@ -2,8 +2,8 @@ import Post from "../models/Post.js";
 
 export const createPost = async (req, res) => {
     try {
-        const { caption, mediaUrl, userId } = req.body;
-        const newPost = new Post({ user: userId, caption, mediaUrl });
+        const { caption, uploadedUrl, userId } = req.body;
+        const newPost = new Post({ user: userId, caption, mediaUrl: uploadedUrl });
         await newPost.save();
         res.status(201).json({ message: "Post created successfully", post: newPost });
     } catch (error) {
@@ -13,9 +13,20 @@ export const createPost = async (req, res) => {
 export const getAllPosts = async (req, res) => {
     try {
         const posts = await Post.find().populate("user", "email").populate("likes").populate("comments.user");
-        res.status(200).json(posts);
+        console.log("Total Posts - ", posts)
+        res.status(200).json({
+            message: "Sending all posts",
+            data: posts,
+            success: true,
+            error: false
+        });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({
+            message: error.message,
+            data: [],
+            success: false,
+            error: true
+        });
     }
 };
 export const likePost = async (req, res) => {
