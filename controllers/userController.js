@@ -130,6 +130,31 @@ export const getPostedBy = async (req, res) => {
         if (!postedBy) {
             throw new Error("Post Author does not exists");
         }
+        console.log("Posted By - ", postedBy);
+        res.status(200).json({
+            message: "Sending Post Author Details",
+            data: postedBy,
+            success: true,
+            error: false
+        })
+    } catch (err) {
+        res.json({
+            message: err.message || err,
+            data: [],
+            success: false,
+            error: true
+        })
+    }
+}
+export const getPostOwner = async (req, res) => {
+    try {
+        const { postedById } = req.query;
+        console.log("ownerId - ", postedById)
+        const postedBy = await User.findById(postedById).select("-password");
+        if (!postedBy) {
+            throw new Error("Post Author does not exists");
+        }
+        console.log("Posted By - ", postedBy);
         res.status(200).json({
             message: "Sending Post Author Details",
             data: postedBy,

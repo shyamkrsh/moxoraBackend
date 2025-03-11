@@ -105,7 +105,6 @@ export const updatePost = async (req, res) => {
         });
     }
 };
-
 export const deletePost = async (req, res) => {
     try {
         const { userId, postedById, postId } = req.body;
